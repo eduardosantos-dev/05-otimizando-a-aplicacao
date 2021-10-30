@@ -1,3 +1,4 @@
+import { AutoSizer, List, ListRowRenderer } from "react-virtualized";
 import { Button } from "./Button";
 
 interface SideBarProps {
@@ -10,7 +11,26 @@ interface SideBarProps {
   selectedGenreId: number;
 }
 
-export function SideBar(props: SideBarProps) {
+export function SideBar({
+  handleClickButton,
+  genres,
+  selectedGenreId,
+}: SideBarProps) {
+  const rowRenderer: ListRowRenderer = ({ index, key, style }) => {
+    const genre = genres[index];
+    return (
+      <div key={key} style={style}>
+        <Button
+          key={genre.id}
+          title={genre.title}
+          iconName={genre.name}
+          onClick={() => handleClickButton(genre.id)}
+          selected={selectedGenreId === genre.id}
+        />
+      </div>
+    );
+  };
+
   return (
     <nav className="sidebar">
       <span>
@@ -18,7 +38,23 @@ export function SideBar(props: SideBarProps) {
       </span>
 
       <div className="buttons-container">
-        {props.genres.map((genre) => (
+        <AutoSizer>
+          {({ height, width }) => {
+            console.log(height);
+            console.log(width);
+            return (
+              <List
+                height={800}
+                rowCount={genres.length}
+                rowHeight={80}
+                rowRenderer={rowRenderer}
+                width={width}
+              />
+            );
+          }}
+        </AutoSizer>
+
+        {/* {props.genres.map((genre) => (
           <Button
             key={String(genre.id)}
             title={genre.title}
@@ -26,7 +62,7 @@ export function SideBar(props: SideBarProps) {
             onClick={() => props.handleClickButton(genre.id)}
             selected={props.selectedGenreId === genre.id}
           />
-        ))}
+        ))} */}
       </div>
     </nav>
   );
